@@ -35,5 +35,26 @@
 
         return $result;
     }
+    function check_db()
+    {
+        global $host, $username, $password, $dbname;
+        $conn = new mysqli($host, $username, $password, $dbname);
+
+        if ($conn->connect_error) 
+            die("Connection failed: " . $conn->connect_error);
+
+        $sql = "CREATE TABLE IF NOT EXISTS 
+            `MY_DATABASE`.`repos` 
+            ( `repo_id` INT NOT NULL , 
+            `repo_name` TINYTEXT NOT NULL , 
+            `repo_url` TINYTEXT NOT NULL , 
+            `created_at` DATE NOT NULL , 
+            `updated_at` DATE NOT NULL , 
+            `description` TEXT NOT NULL , 
+            `stargazers` INT NOT NULL ) ENGINE = InnoDB;";
+        $result = $conn->query($sql);
+
+        $conn->close();
+    }
 
 ?>

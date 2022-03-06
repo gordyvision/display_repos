@@ -1,6 +1,9 @@
 <?php
     // Includes
     include_once("lib/funcs.php");
+
+    // Make sure our DB is in place
+    check_db();
 ?>
 <link rel="stylesheet" href="styles.css">
 
@@ -29,6 +32,14 @@
         <th>More info</th>
 <?php
     $results = get_repos();
+    if($results->num_rows < 1)
+    {
+        echo "<script>
+                update_repo_db();
+            </script>
+            Please wait...gathering results...
+            <meta http-equiv='refresh' content='2'/>";
+    }
     foreach($results as $result)
     {
         echo "<tr>";
