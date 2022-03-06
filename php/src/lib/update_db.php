@@ -1,46 +1,48 @@
 <?php
     include_once("funcs.php");
 
-    //$servername = "127.0.0.1";
-    $username = "MYSQL_USER";
-    $password = "MYSQL_PASSWORD";
-    $host = "db";
-
-    $conn = new mysqli($host, $username, $password);
+    $conn = new mysqli($host, $username, $password, $dbname);
 
     if ($conn->connect_error) 
-    {
         die("Connection failed: " . $conn->connect_error);
-    }
 
-    $sql = "INSERT INTO repos (repo_id, repo_name, repo_url, created_at, updated_at, description, stargazers) VALUES (12345, 'test_repo', 'http://fakeurl.github.com/', '2022-03-05', '2022-03-05', 'This is not a real repo', 0), ";
+    
+    $url = "https://api.github.com/search/repositories?q=language:php&sort=stars";
 
-    if ($conn->query($sql) === TRUE)
-    {
-        echo "New record created successfully";
-    } 
-    else 
-    {
+    $results = api_request($url);
+
+    //echo var_dump($results);
+
+    $sql = "delete from repos";
+
+    if ($conn->query($sql) !== TRUE)
         echo "Error: " . $sql . "<br>" . $conn->error;
+
+    foreach($results["items"] as $result)
+    {
+        $sql = $conn->prepare("INSERT INTO repos 
+                    (repo_id, 
+                    repo_name, 
+                    repo_url, 
+                    created_at, 
+                    updated_at, 
+                    description, 
+                    stargazers) 
+                VALUES 
+                    (?, ?, ?, ?, ?, ?, ?) ");
+
+        $sql->bind_param("isssssi",
+                        $result['id'],
+                        $result['name'],
+                        $result['html_url'],
+                        explode('T',$result['created_at'])[0],
+                        explode('T',$result['updated_at'])[0],
+                        $result['description'],
+                        $result['stargazers_count']
+                        );
+        if ($sql->execute() !== TRUE)
+            echo "Error: " . $sql . "<br>" . $conn->error;
     }
-      
+
     $conn->close();
-    // $url = "https://api.github.com/search/repositories?q=language:php&sort=stars";
-
-    // $results = api_request($url);
-
-    // //echo var_dump($results);
-
-    // foreach($results["items"] as $result)
-    // {
-    //     echo "ID: ".$result["id"]."<BR>";
-    //     echo "Name: ".$result["name"]."<BR>";
-    //     echo "Owner: ".$result["owner"]["login"]."<BR>";
-    //     echo "URL: ".$result["html_url"]."<BR>";
-    //     echo "Created: ".$result["created_at"]."<BR>";
-    //     echo "Last Update: ".$result["updated_at"]."<BR>";
-    //     echo "Description: ".$result["description"]."<BR>";
-    //     echo "Stars: ".$result["stargazers_count"]."<BR><BR>";
-    // }
-
 ?>
