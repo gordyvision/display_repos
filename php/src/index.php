@@ -1,3 +1,4 @@
+<html>
 <?php
     // Includes
     include_once("lib/funcs.php");
@@ -15,6 +16,29 @@
             $("#db_status").html("Database updated with latest results!<BR>"+result);
         }});
     }
+    $( document ).ready(function() {
+        var coll = document.getElementsByClassName("expand");
+        var i;
+
+        for (i = 0; i < coll.length; i++) 
+        {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+
+                if (content.style.maxHeight)
+                {
+                    content.style.maxHeight = null;
+                    content.style.maxWidth = null;
+                }
+                else 
+                {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.style.maxWidth = content.scrollWidth + "px";
+                }
+            });
+        }
+    });
 </script>
 
 <div id="update_db" style="text-align:right">
@@ -73,26 +97,4 @@
 ?>
 </table>
 </div>
-<script>
-var coll = document.getElementsByClassName("expand");
-var i;
-
-for (i = 0; i < coll.length; i++) 
-{
-    coll[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-
-        if (content.style.maxHeight)
-        {
-            content.style.maxHeight = null;
-            content.style.maxWidth = null;
-        }
-        else 
-        {
-            content.style.maxHeight = content.scrollHeight + "px";
-            content.style.maxWidth = content.scrollWidth + "px";
-        }
-    });
-}
-</script>
+</html>
