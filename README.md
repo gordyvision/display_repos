@@ -8,6 +8,8 @@ User has basic knowledge of starting and stopping Docker containers
 
 Database will not be used for multiple updates/table creations at the same time (single user app)
 
+User has internet connection so cURL can access API URL
+
 **Dependencies:**
 
 **Linux:**
